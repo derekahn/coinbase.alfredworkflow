@@ -54,7 +54,7 @@ jobs:
         target: [x86_64-apple-darwin, aarch64-apple-darwin]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: extractions/setup-crate@v1
         with:
@@ -72,7 +72,7 @@ jobs:
 
       - name: Calculate version from tag
         id: version
-        run: echo "::set-output name=value::${GITHUB_REF#refs/tags/}"
+        run: echo "value=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Archive
         id: archive
@@ -80,7 +80,7 @@ jobs:
           archive=coinbase-${{ steps.version.outputs.value }}-${{ matrix.target }}.alfredworkflow
           powerpack package --target ${{ matrix.target }}
           mv target/workflow/coinbase.alfredworkflow "$archive"
-          echo "::set-output name=path::$archive"
+          echo "path=$archive" >> $GITHUB_OUTPUT
 
       - uses: softprops/action-gh-release@v1
         env:
