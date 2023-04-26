@@ -5,20 +5,20 @@ use anyhow::Result;
 
 use crate::{Coin, Symbol, URL};
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 struct Data {
     base: String,
     amount: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 struct Payload {
     data: Data,
 }
 
 pub async fn get_coins() -> Result<Vec<Coin>> {
     let urls: Vec<String> = Symbol::all()
-        .into_iter()
+        .iter()
         .map(|s| URL.replace("{}", &s.to_string(false)))
         .collect();
 
@@ -40,25 +40,27 @@ pub async fn get_coins() -> Result<Vec<Coin>> {
 }
 
 async fn fetch(url: String) -> Result<Coin, String> {
-    let client = reqwest::Client::new();
+    use reqwest::{header, Client, StatusCode};
+
+    let client = Client::new();
     let response = client
         .get(url)
-        .header(reqwest::header::CONTENT_TYPE, "application/json")
-        .header(reqwest::header::ACCEPT, "application/json")
+        .header(header::CONTENT_TYPE, "application/json")
+        .header(header::ACCEPT, "application/json")
         .send()
         .await
         .unwrap();
 
     match response.status() {
-        reqwest::StatusCode::OK => match response.json::<Payload>().await {
+        StatusCode::OK => match response.json::<Payload>().await {
             Ok(parsed) => Ok(Coin {
                 symbol: Symbol::new(parsed.data.base.as_str()),
                 price: format_price(&parsed.data.amount),
             }),
             Err(_) => Err("Response didn't match the structure we were expecting".to_owned()),
         },
-        reqwest::StatusCode::NOT_FOUND => Err("Not found".to_owned()),
-        reqwest::StatusCode::UNAUTHORIZED => Err("Need to grab an API token".to_owned()),
+        StatusCode::NOT_FOUND => Err("Not found".to_owned()),
+        StatusCode::UNAUTHORIZED => Err("Need to grab an API token".to_owned()),
         _ => Err("Uh oh! something unexpected happened".to_owned()),
     }
 }

@@ -1,4 +1,4 @@
-mod api;
+mod coinbase;
 
 use std::env;
 
@@ -32,6 +32,11 @@ pub enum Symbol {
 }
 
 impl Symbol {
+    pub fn all() -> Vec<Symbol> {
+        use Symbol::*;
+        vec![ADA, BTC, ETH, DOT, DOGE, LTC, MATIC, SOL]
+    }
+
     pub fn new(s: &str) -> Symbol {
         use Symbol::*;
         match s {
@@ -69,20 +74,11 @@ impl Symbol {
             (SOL, true) => "solana".to_owned(),
         }
     }
-
-    pub fn all() -> Vec<Symbol> {
-        use Symbol::*;
-        vec![ADA, BTC, ETH, DOT, DOGE, LTC, MATIC, SOL]
-    }
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let query = env::args()
-        .nth(1)
-        .as_deref()
-        .map(str::trim)
-        .map(str::to_uppercase);
+    let query = env::args().nth(1).map(|s| s.trim().to_uppercase());
 
     let filter_fn = |coin: &Coin| {
         coin.symbol
@@ -90,7 +86,7 @@ async fn main() -> Result<()> {
             .contains(query.as_deref().unwrap_or(""))
     };
 
-    let responses = api::get_coins().await.unwrap();
+    let responses = coinbase::get_coins().await?;
     let coins = responses.into_iter().filter(filter_fn);
 
     powerpack::output(coins.into_iter().map(Coin::into_item))?;
