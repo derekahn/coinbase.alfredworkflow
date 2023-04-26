@@ -2,6 +2,8 @@
 
 A simple [Alfred Workflow](https://www.alfredapp.com/workflows/) to check the current _spot_ prices of some of the top cryptocurrencies.
 
+https://user-images.githubusercontent.com/5381156/234468094-e5820cd0-b6da-4fee-b95f-57865a8fc057.mp4
+
 > Big thank you to [@rossmacarthur](https://github.com/rossmacarthur) for creating [powerpack ⚡️](https://github.com/rossmacarthur/powerpack) 👏🏽
 
 Supported coins:
