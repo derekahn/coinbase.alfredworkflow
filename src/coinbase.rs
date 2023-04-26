@@ -68,20 +68,52 @@ async fn fetch(url: String) -> Result<Coin, String> {
 fn format_price(price: &str) -> String {
     let (dollars, cents) = price.split_once('.').unwrap_or(("0", "00"));
 
+    // no comma required for less than a thousand
     let dollars: String = if dollars.len() < 4 {
         dollars.to_owned()
     } else {
         dollars
             .chars()
+            .rev()
             .enumerate()
             .fold(String::new(), |mut acc, (i, c)| {
-                acc.push(c);
-                if dollars.len() % 3 == (i + 1) {
+                if i > 0 && i % 3 == 0 {
                     acc.push(',');
                 }
+                acc.push(c);
                 acc
             })
+            .chars()
+            .rev()
+            .collect()
     };
 
     format!("${}.{}", dollars, cents)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn format_price_test() {
+        let test_cases = [
+            ("0.00", "$0.00"),
+            ("1.23", "$1.23"),
+            ("12.34", "$12.34"),
+            ("123.45", "$123.45"),
+            ("1234.56", "$1,234.56"),
+            ("12345.67", "$12,345.67"),
+            ("123456.78", "$123,456.78"),
+            ("1000000.00", "$1,000,000.00"),
+            ("10000000.00", "$10,000,000.00"),
+            ("100000000.00", "$100,000,000.00"),
+            ("10000000000", "$0.00"),
+        ];
+
+        for (input, expected) in &test_cases {
+            let formatted = format_price(input);
+            assert_eq!(formatted, *expected);
+        }
+    }
 }
