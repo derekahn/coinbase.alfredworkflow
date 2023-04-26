@@ -15,7 +15,7 @@ jobs:
         toolchain: [stable, beta, nightly]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup Rust
       run: |
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Calculate version from tag
         id: version
@@ -48,6 +48,8 @@ jobs:
   release:
     needs: check-version
     runs-on: macos-latest
+    permissions:
+      contents: write
 
     strategy:
       matrix:
@@ -87,3 +89,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: ${{ steps.archive.outputs.path }}
+
