@@ -2,7 +2,7 @@
 
 A simple [Alfred Workflow](https://www.alfredapp.com/workflows/) to check the current _spot_ prices of some of the top cryptocurrencies.
 
-https://user-images.githubusercontent.com/5381156/234468094-e5820cd0-b6da-4fee-b95f-57865a8fc057.mp4
+<img style="padding: 1rem 0" width="605" alt="Screenshot" src="https://user-images.githubusercontent.com/5381156/234696277-3219989d-15e9-47f7-b0c4-dd54bbae7525.gif">
 
 > Big thank you to [@rossmacarthur](https://github.com/rossmacarthur) for creating [powerpack ⚡️](https://github.com/rossmacarthur/powerpack) 👏🏽
 
@@ -19,7 +19,7 @@ Supported coins:
 
 ## 🌈 Features
 
-- Check the spot price of the top 9 coins on coinbase.
+- Check the spot price of some of the top 9 on coinbase.
 - Fuzzy find.
 - Open coinbase to the coin in the default browser.
 
@@ -45,7 +45,7 @@ need to install Rust and Cargo using [rustup](https://rustup.rs/). Then install
 following to build an `.alfredworkflow` file.
 
 ```bash
-git clone https://github.com/derekahn/alfred.alfredworkflow.git
+git clone https://github.com/derekahn/coinbase.alfredworkflow.git
 
 cd coinbase.alfredworkflow
 
@@ -53,6 +53,11 @@ powerpack package
 ```
 
 The release will be available at `target/workflow/coinbase.alfredworkflow`.
+
+## 🚧 Roadmap
+
+- [ ] configurable coin selection
+- [ ] configurable currency selection (other than USD)
 
 ## 🪪 License
 
