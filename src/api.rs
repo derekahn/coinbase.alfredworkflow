@@ -52,27 +52,27 @@ async fn fetch(url: String) -> Result<Coin, String> {
     match response.status() {
         reqwest::StatusCode::OK => match response.json::<Payload>().await {
             Ok(parsed) => {
-                return Ok(Coin {
+                Ok(Coin {
                     symbol: Symbol::new(parsed.data.base.as_str()),
                     price: format_price(&parsed.data.amount),
                 })
             }
             Err(_) => {
-                return Err("Response didn't match the structure we were expecting".to_owned())
+                Err("Response didn't match the structure we were expecting".to_owned())
             }
         },
         reqwest::StatusCode::NOT_FOUND => {
-            return Err("Not found".to_owned());
+            Err("Not found".to_owned())
         }
         reqwest::StatusCode::UNAUTHORIZED => {
-            return Err("Need to grab an API token".to_owned());
+            Err("Need to grab an API token".to_owned())
         }
         _ => Err("Uh oh! something unexpected happened".to_owned()),
     }
 }
 
 fn format_price(price: &str) -> String {
-    let (dollars, cents) = price.split_once(".").unwrap_or(("0", "00"));
+    let (dollars, cents) = price.split_once('.').unwrap_or(("0", "00"));
 
     let dollars: String = if dollars.len() < 4 {
         dollars.to_owned()
