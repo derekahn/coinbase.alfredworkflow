@@ -51,22 +51,14 @@ async fn fetch(url: String) -> Result<Coin, String> {
 
     match response.status() {
         reqwest::StatusCode::OK => match response.json::<Payload>().await {
-            Ok(parsed) => {
-                Ok(Coin {
-                    symbol: Symbol::new(parsed.data.base.as_str()),
-                    price: format_price(&parsed.data.amount),
-                })
-            }
-            Err(_) => {
-                Err("Response didn't match the structure we were expecting".to_owned())
-            }
+            Ok(parsed) => Ok(Coin {
+                symbol: Symbol::new(parsed.data.base.as_str()),
+                price: format_price(&parsed.data.amount),
+            }),
+            Err(_) => Err("Response didn't match the structure we were expecting".to_owned()),
         },
-        reqwest::StatusCode::NOT_FOUND => {
-            Err("Not found".to_owned())
-        }
-        reqwest::StatusCode::UNAUTHORIZED => {
-            Err("Need to grab an API token".to_owned())
-        }
+        reqwest::StatusCode::NOT_FOUND => Err("Not found".to_owned()),
+        reqwest::StatusCode::UNAUTHORIZED => Err("Need to grab an API token".to_owned()),
         _ => Err("Uh oh! something unexpected happened".to_owned()),
     }
 }
